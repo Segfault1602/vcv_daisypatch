@@ -1,0 +1,23 @@
+{
+    "slug": "VcvDaisyPatch",
+    "name": "Fake Daisy Patch",
+    "version": "0.0.1",
+    "license": "MIT",
+    "brand": "segfaultdsp",
+    "author": "Alex St-Onge",
+    "authorEmail": "",
+    "authorUrl": "segfaultdsp.com",
+    "pluginUrl": "",
+    "manualUrl": "",
+    "sourceUrl": "",
+    "donateUrl": "",
+    "changelogUrl": "",
+    "modules": [
+        {
+            "slug": "VcvDaisyPatch",
+            "name": "Fake Daisy Patch",
+            "description": "Daisy Patch facade for VCV Rack. https://www.electro-smith.com/daisy/patch",
+            "tags": []
+        }
+    ]
+}
