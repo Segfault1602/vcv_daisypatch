@@ -1,0 +1,22 @@
+{
+    "files.associations": {
+        "cstdint": "cpp"
+    },
+    "terminal.integrated.profiles.windows": {
+        "Custom Init": {
+            "path": "C:\\msys64\\usr\\bin\\bash.exe",
+            "args": [
+                "--login",
+                "-i"
+            ],
+            "env": {
+                "MSYSTEM": "MINGW64",
+                "CHERE_INVOKING": "1"
+            }
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "Custom Init",
+    "rack_sdk_dir": "${env:RACK_DIR}",
+    "msys64_dir": "C:\\msys64",
+    "rack_exe": "C:\\Program Files\\VCV\\Rack2Free\\Rack.exe"
+}
