@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "cstdint": "cpp"
+        "cstdint": "cpp",
+        "cmath": "cpp"
     },
     "terminal.integrated.profiles.windows": {
         "Custom Init": {

@@ -46,13 +46,13 @@ struct VcvPatch : Module
         LIGHTS_LEN
     };
 
-    VcvPatch()
+    VcvPatch() : impl_(patch_)
     {
         config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-        configParam(CTR1_PARAM, 0.f, 1.f, 0.f, "CTRL 1");
-        configParam(CTRL2_PARAM, 0.f, 1.f, 0.f, "CTRL 2");
-        configParam(CTRL3_PARAM, 0.f, 1.f, 0.f, "CTRL 3");
-        configParam(CTRL4_PARAM, 0.f, 1.f, 0.f, "CTRL 4");
+        configParam(CTR1_PARAM, 0.f, 5.f, 0.f, "CTRL 1");
+        configParam(CTRL2_PARAM, 0.f, 5.f, 0.f, "CTRL 2");
+        configParam(CTRL3_PARAM, 0.f, 5.f, 0.f, "CTRL 3");
+        configParam(CTRL4_PARAM, 0.f, 5.f, 0.f, "CTRL 4");
         configParam(ENC1_PARAM, -INFINITY, INFINITY, 0.f, "Encoder");
         configInput(CV_IN1_INPUT, "CV In 1");
         configInput(CV_IN2_INPUT, "CV In 2");
@@ -73,10 +73,29 @@ struct VcvPatch : Module
         configOutput(CV_OUT2_OUTPUT, "CV Out 2");
         configInput(MIDI_IN_INPUT, "MIDI In");
         configOutput(MIDI_OUT_OUTPUT, "MIDI Out");
+
+        impl_.Init(48000.f);
+    }
+
+    void onSampleRateChange(const SampleRateChangeEvent& e) override
+    {
+        Module::onSampleRateChange(e);
+        patch_.SetAudioSampleRate(e.sampleRate);
+        impl_.OnSampleRateChange(e.sampleRate);
     }
 
     void process(const ProcessArgs &args) override
     {
+
+        // Process the CV inputs
+        for (uint8_t i = 0; i < PATCH_INPUT_COUNT; ++i)
+        {
+            patch_.ctrl_vals[i] = inputs[CV_IN1_INPUT + i].getVoltage() + params[CTR1_PARAM + i].getValue();
+            // The Patch CV inputs have range of 0v to 5v, but VCV rack can send anything from -10v to 10v
+            // Let's just clamp the value for now
+            patch_.ctrl_vals[i] = clamp(patch_.ctrl_vals[i], 0.f, 5.f);
+        }
+
         // Currently only support per-sample processing
         constexpr size_t kBlockSize = 1;
 
@@ -103,7 +122,7 @@ struct VcvPatch : Module
         patchInput[2][0] = inputs[IN_3_INPUT].getVoltage() * kNormFactor;
         patchInput[3][0] = inputs[IN_4_INPUT].getVoltage() * kNormFactor;
 
-        impl.AudioCallback(patchInput, patchOutput, 1);
+        impl_.AudioCallback(patchInput, patchOutput, 1);
 
         outputs[OUT_1_OUTPUT].setVoltage(patchOutput[0][0] * 5.f);
         outputs[OUT_2_OUTPUT].setVoltage(patchOutput[1][0] * 5.f);
@@ -112,7 +131,8 @@ struct VcvPatch : Module
     }
 
 private:
-    PluginImpl impl;
+  NotDaisyPatch patch_;
+  PluginImpl impl_;
 };
 
 struct DaisyDisplay : LedDisplay
@@ -169,7 +189,7 @@ struct DaisyWidget : ModuleWidget
         addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(66.058, 106.752)), module, VcvPatch::CV_OUT2_OUTPUT));
         addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(53.737, 106.752)), module, VcvPatch::MIDI_OUT_OUTPUT));
 
-        // LCD display
+        // OLED display
         DaisyDisplay *display = createWidget<DaisyDisplay>(mm2px(Vec(28.9719, 48.1542)));
         display->box.size = mm2px(Vec(38.894, 20.505));
         display->module = module;
