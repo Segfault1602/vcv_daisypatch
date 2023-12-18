@@ -22,11 +22,11 @@ Once your environment is set up, you can simply follow the VCV Rack instructions
 - The 4 CV inputs (CTRL 1-4) and their corresponding knobs
 - The 4 audio inputs (IN 1-4)
 - The 4 audio outputs (OUT 1-4)
+- The 2 gate inputs (GATE 1-2) and output (GATE OUT 1)
+- Both CV outputs
 
 ## What is not working right now
-- The 2 gate inputs (GATE 1-2) and output (GATE OUT 1)
 - Midi input and output
-- Both CV outputs
 - Encoder
 - OLED display
 
