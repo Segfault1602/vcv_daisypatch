@@ -2,7 +2,7 @@
 
 using namespace NotDaisy;
 
-void NotDaisyPatch::Init(float samplerate)
+void DaisyPatch::Init(float samplerate)
 {
     seed.SetAudioSampleRate(samplerate);
 
@@ -10,30 +10,38 @@ void NotDaisyPatch::Init(float samplerate)
     controls[CTRL_2].Init(&ctrl_vals[CTRL_2], samplerate);
     controls[CTRL_3].Init(&ctrl_vals[CTRL_3], samplerate);
     controls[CTRL_4].Init(&ctrl_vals[CTRL_4], samplerate);
+
+    gate_input[GATE_IN_1].Init(&gate_vals[GATE_IN_1]);
+    gate_input[GATE_IN_2].Init(&gate_vals[GATE_IN_2]);
+
+    seed.dac.Init(&cvout_vals[0], &cvout_vals[1]);
 }
 
-void NotDaisyPatch::ProcessAnalogControls()
+void DaisyPatch::ProcessAnalogControls()
+{
+    for (size_t i = 0; i < CTRL_LAST; ++i)
+    {
+        ctrl_vals[i] = controls[i].Process();
+    }
+}
+
+void DaisyPatch::ProcessDigitalControls()
 {
     // no-op
 }
 
-void NotDaisyPatch::ProcessDigitalControls()
-{
-    // no-op
-}
-
-void NotDaisyPatch::ProcessAllControls()
+void DaisyPatch::ProcessAllControls()
 {
     ProcessAnalogControls();
     ProcessDigitalControls();
 }
 
-float NotDaisyPatch::GetKnobValue(Ctrl k)
+float DaisyPatch::GetKnobValue(Ctrl k)
 {
-    return ctrl_vals[k];
+    return controls[k].Value();
 }
 
-void NotDaisyPatch::SetAudioSampleRate(float sr)
+void DaisyPatch::SetAudioSampleRate(float sr)
 {
     seed.SetAudioSampleRate(sr);
     for (size_t i = 0; i < CTRL_LAST; ++i)
@@ -42,7 +50,7 @@ void NotDaisyPatch::SetAudioSampleRate(float sr)
     }
 }
 
-float NotDaisyPatch::AudioSampleRate()
+float DaisyPatch::AudioSampleRate()
 {
     return seed.AudioSampleRate();
 }

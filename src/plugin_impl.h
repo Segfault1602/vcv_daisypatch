@@ -2,6 +2,8 @@
 
 #include <cstddef>
 
+#include <daisysp.h>
+
 #include "not_daisy_patch.h"
 
 using namespace NotDaisy;
@@ -9,7 +11,7 @@ using namespace NotDaisy;
 class PluginImpl
 {
 public:
-  PluginImpl(NotDaisyPatch& patch) : patch_(patch)
+  PluginImpl(DaisyPatch& patch) : patch_(patch)
   {
   }
   virtual ~PluginImpl() = default;
@@ -30,11 +32,6 @@ public:
   /// @param sr The new sample rate
   virtual void OnSampleRateChange(float sr);
 
-private:
-  NotDaisyPatch& patch_;
-
-  float p1 = 0.f;
-  float p2 = 0.f;
-  float p3 = 0.f;
-  float p4 = 0.f;
+protected:
+  DaisyPatch& patch_;
 };

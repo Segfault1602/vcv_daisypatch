@@ -7,7 +7,7 @@
         {
             "label": "Build-Install",
             "type": "shell",
-            "command": "make ARGS=\"no-strip\" install",
+            "command": "make ARGS=\"no-strip\" install -j",
             "options": {
                 "cwd": "${workspaceRoot}",
                 "env": {

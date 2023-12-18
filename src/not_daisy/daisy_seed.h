@@ -57,6 +57,8 @@ class DaisySeed
         return 0.f;
     }
 
+    DacHandle dac;
+
   private:
     float samplerate_;
     uint32_t blocksize_;

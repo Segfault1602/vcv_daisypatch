@@ -1,0 +1,3 @@
+[submodule "externals/DaisySP"]
+	path = externals/DaisySP
+	url = https://github.com/electro-smith/DaisySP.git

@@ -2,6 +2,9 @@
 
 #include "not_daisy_patch.h"
 #include "plugin_impl.h"
+#include "test_plugin_impl.h"
+
+#include <memory>
 
 struct VcvPatch : Module
 {
@@ -46,7 +49,7 @@ struct VcvPatch : Module
         LIGHTS_LEN
     };
 
-    VcvPatch() : impl_(patch_)
+    VcvPatch()
     {
         config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
         configParam(CTR1_PARAM, 0.f, 5.f, 0.f, "CTRL 1");
@@ -74,19 +77,19 @@ struct VcvPatch : Module
         configInput(MIDI_IN_INPUT, "MIDI In");
         configOutput(MIDI_OUT_OUTPUT, "MIDI Out");
 
-        impl_.Init(48000.f);
+        impl_ = std::unique_ptr<PluginImpl>(new TestPluginImpl(patch_));
+        impl_->Init(48000.f);
     }
 
     void onSampleRateChange(const SampleRateChangeEvent& e) override
     {
         Module::onSampleRateChange(e);
         patch_.SetAudioSampleRate(e.sampleRate);
-        impl_.OnSampleRateChange(e.sampleRate);
+        impl_->OnSampleRateChange(e.sampleRate);
     }
 
     void process(const ProcessArgs &args) override
     {
-
         // Process the CV inputs
         for (uint8_t i = 0; i < PATCH_INPUT_COUNT; ++i)
         {
@@ -94,6 +97,12 @@ struct VcvPatch : Module
             // The Patch CV inputs have range of 0v to 5v, but VCV rack can send anything from -10v to 10v
             // Let's just clamp the value for now
             patch_.ctrl_vals[i] = clamp(patch_.ctrl_vals[i], 0.f, 5.f);
+        }
+
+        // Process the gate inputs
+        for (uint8_t i = 0; i < PATCH_GATE_INPUT_COUNT; ++i)
+        {
+            patch_.gate_vals[i] = inputs[GATE_IN_1_INPUT + i].getVoltage();
         }
 
         // Currently only support per-sample processing
@@ -122,17 +131,25 @@ struct VcvPatch : Module
         patchInput[2][0] = inputs[IN_3_INPUT].getVoltage() * kNormFactor;
         patchInput[3][0] = inputs[IN_4_INPUT].getVoltage() * kNormFactor;
 
-        impl_.AudioCallback(patchInput, patchOutput, 1);
+        impl_->AudioCallback(patchInput, patchOutput, 1);
 
         outputs[OUT_1_OUTPUT].setVoltage(patchOutput[0][0] * 5.f);
         outputs[OUT_2_OUTPUT].setVoltage(patchOutput[1][0] * 5.f);
         outputs[OUT_3_OUTPUT].setVoltage(patchOutput[2][0] * 5.f);
         outputs[OUT_4_OUTPUT].setVoltage(patchOutput[3][0] * 5.f);
+
+        // handle Gate out
+        auto gateOut = patch_.gate_output;
+        outputs[GATE_OUT_OUTPUT].setVoltage(gateOut ? 10.f : 0.f);
+
+        // handle cv outs
+        outputs[CV_OUT1_OUTPUT].setVoltage(patch_.cvout_vals[0]);
+        outputs[CV_OUT2_OUTPUT].setVoltage(patch_.cvout_vals[1]);
     }
 
 private:
-  NotDaisyPatch patch_;
-  PluginImpl impl_;
+  DaisyPatch patch_;
+  std::unique_ptr<PluginImpl> impl_;
 };
 
 struct DaisyDisplay : LedDisplay

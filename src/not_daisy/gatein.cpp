@@ -2,9 +2,19 @@
 
 using namespace NotDaisy;
 
+void GateIn::Init(float* pin)
+{
+    pin_ = pin;
+    state_ = false;
+}
+
 bool GateIn::Trig()
 {
-    bool trigger = state_ && !prev_state_;
-    prev_state_ = state_;
-    return trigger;
+    return trigger_.process(*pin_);
+}
+
+bool GateIn::State()
+{
+    state_ = *pin_ > 1.f;
+    return state_;
 }

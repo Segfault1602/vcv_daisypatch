@@ -1,12 +1,15 @@
 #pragma once
 
 #include "ctrl.h"
+#include "dac.h"
 #include "daisy_seed.h"
 #include "encoder.h"
 #include "gatein.h"
+#include "gpio.h"
 
 #define PATCH_INPUT_COUNT (4u)
 #define PATCH_OUTPUT_COUNT (4u)
+#define PATCH_GATE_INPUT_COUNT (2u)
 
 namespace NotDaisy
 {
@@ -16,7 +19,7 @@ typedef float** OutputBuffer;
 typedef const float* const* InputBuffer;
 } // namespace AudioHandle
 
-class NotDaisyPatch
+class DaisyPatch
 {
   public:
     enum Ctrl
@@ -35,7 +38,7 @@ class NotDaisyPatch
         GATE_IN_LAST,
     };
 
-    NotDaisyPatch() = default;
+    DaisyPatch() = default;
 
     void Init(float samplerate);
     void ProcessAnalogControls();
@@ -51,8 +54,11 @@ class NotDaisyPatch
     Encoder encoder;                   /**< Encoder object */
     AnalogControl controls[CTRL_LAST]; /**< Array of controls*/
     GateIn gate_input[GATE_IN_LAST];   /**< Gate inputs  */
+    dsy_gpio gate_output;
 
     // Hardware
     float ctrl_vals[CTRL_LAST];
+    float gate_vals[GATE_IN_LAST];
+    float cvout_vals[2];
 };
 } // namespace NotDaisy

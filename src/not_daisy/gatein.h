@@ -2,6 +2,8 @@
 #ifndef DSY_GATEIN_H
 #define DSY_GATEIN_H
 
+#include <rack.hpp>
+
 namespace NotDaisy
 {
 /**
@@ -14,14 +16,9 @@ class GateIn
 {
   public:
     /** GateIn Constructor */
-    GateIn()
-    {
-    }
+    GateIn() = default;
 
-    /** GateIn Destructor */
-    ~GateIn()
-    {
-    }
+    void Init(float* pin);
 
     /** Checks current state of gate input.
      *  @return True if the GPIO just transitioned.
@@ -30,13 +27,13 @@ class GateIn
 
     /** Checks current state of gate input (no state required)
      */
-    inline bool State()
-    {
-        return state_;
-    }
+    bool State();
 
   private:
-    bool prev_state_, state_;
+    float* pin_ = nullptr;
+    bool state_ = false;
+
+    rack::dsp::SchmittTrigger trigger_;
 };
 } // namespace NotDaisy
 #endif
