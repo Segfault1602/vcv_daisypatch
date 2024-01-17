@@ -2,6 +2,8 @@
 #ifndef DSY_SEED_H
 #define DSY_SEED_H
 
+#include <cstddef>
+
 // Uncomment this out if you're still using the rev2 hardware
 // #define SEED_REV2
 

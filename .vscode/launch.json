@@ -12,6 +12,10 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
+            "osx": {
+                "program": "/Applications/VCV Rack 2 Free.app/Contents/MacOS/Rack",
+                "MIMode": "lldb"
+            },
             "environment": [],
             "externalConsole": false
         },
@@ -21,6 +25,10 @@
             "request": "launch",
             "program": "${config:rack_exe}",
             "args": [],
+            "osx": {
+                "program": "/Applications/VCV Rack 2 Free.app/Contents/MacOS/Rack",
+                "MIMode": "lldb"
+            },
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

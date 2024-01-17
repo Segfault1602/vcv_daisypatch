@@ -1,8 +1,9 @@
 #include "plugin.hpp"
 
 #include "not_daisy_patch.h"
+#include "phaseshaper_plugin.h"
 #include "plugin_impl.h"
-#include "test_plugin_impl.h"
+// #include "test_plugin_impl.h"
 
 #include <memory>
 
@@ -77,7 +78,7 @@ struct VcvPatch : Module
         configInput(MIDI_IN_INPUT, "MIDI In");
         configOutput(MIDI_OUT_OUTPUT, "MIDI Out");
 
-        impl_ = std::unique_ptr<PluginImpl>(new TestPluginImpl(patch_));
+        impl_ = std::unique_ptr<PluginImpl>(new PhaseshaperImpl(patch_));
         impl_->Init(48000.f);
     }
 

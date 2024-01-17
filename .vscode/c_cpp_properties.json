@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/externals/DaisySP/Source",
+                "${workspaceFolder}/../libdsp/include/",
                 "${vcpkgRoot}/x64-windows/include",
                 "${vcpkgRoot}/x86-windows/include",
                 "${env:RACK_DIR}/include",
@@ -17,10 +18,10 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.22000.0",
-            "compilerPath": "${config:msys64_dir}/mingw64/bin/g++.exe",
+            // "compilerPath": "${config:msys64_dir}/mingw64/bin/g++.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "windows-gcc-x64",
+            "intelliSenseMode": "macos-gcc-arm64",
             "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
